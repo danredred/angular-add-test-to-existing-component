@@ -14,15 +14,23 @@
   "contributes": {
     "commands": [
       {
-        "command": "angular-add-test-to-existing-component.helloWorld",
-        "title": "Hello World"
+        "command": "ng-generate-spec.create",
+        "title": "Add Test to Existing Component"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "ng-generate-spec.create",
+          "when": "resourceFilename =~ /\\.component\\.ts$/",
+          "group": "z_commands"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
-    "watch": "webpack --watch",
     "package": "webpack --mode production --devtool hidden-source-map",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",

@@ -1,26 +1,67 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
+import * as fs from "fs";
+import * as path from "path";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "angular-add-test-to-existing-component" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('angular-add-test-to-existing-component.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Angular Add Test To Existing Component!');
-	});
-
-	context.subscriptions.push(disposable);
+function toClassName(fileName: string): string {
+  return (
+    fileName
+      .split("-")
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join("") + "Component"
+  );
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+function createSpecFile(componentPath: string) {
+  const dir = path.dirname(componentPath);
+  const fileBase = path.basename(componentPath, ".component.ts");
+  const className = toClassName(fileBase);
+  const specPath = path.join(dir, `${fileBase}.component.spec.ts`);
+
+  if (fs.existsSync(specPath)) {
+    vscode.window.showInformationMessage("Spec file already exists.");
+    return;
+  }
+
+  const content = `import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ${className} } from './${fileBase}.component';
+
+describe('${className}', () => {
+  let component: ${className};
+  let fixture: ComponentFixture<${className}>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ ${className} ]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(${className});
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+`;
+
+  fs.writeFileSync(specPath, content);
+  vscode.window.showInformationMessage(`Spec file created at ${specPath}`);
+}
+
+export function activate(context: vscode.ExtensionContext) {
+  const disposable = vscode.commands.registerCommand(
+    "ng-generate-spec.create",
+    (uri) => {
+      const filePath = uri.fsPath;
+      if (filePath.endsWith(".component.ts")) {
+        createSpecFile(filePath);
+      } else {
+        vscode.window.showWarningMessage("Please select a .component.ts file.");
+      }
+    }
+  );
+
+  context.subscriptions.push(disposable);
+}
