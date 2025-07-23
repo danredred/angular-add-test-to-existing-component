@@ -2,7 +2,7 @@
   "name": "angular-add-test-to-existing-component",
   "displayName": "Angular Add Test To Existing Component",
   "description": "Adds a unit test to an angular component generated with --skip-tests",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.102.0"
   },
