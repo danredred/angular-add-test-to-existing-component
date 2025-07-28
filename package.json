@@ -1,13 +1,13 @@
 {
-  "name": "angular-add-test-to-existing-component",
-  "displayName": "Angular Add Test To Existing Component",
-  "description": "Adds a unit test to an angular component generated with --skip-tests",
-  "version": "1.0.0",
+  "name": "angular-add-test-to-existing",
+  "displayName": "Angular Add Test To Existing Thing",
+  "description": "Adds a unit test to an angular component / service generated with --skip-tests",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.102.0"
   },
   "categories": [
-    "Other"
+    "Testing"
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
@@ -15,7 +15,7 @@
     "commands": [
       {
         "command": "ng-generate-spec.create",
-        "title": "Add Test to Existing Component"
+        "title": "Add Test To Existing"
       }
     ],
     "menus": {
@@ -23,6 +23,11 @@
         {
           "command": "ng-generate-spec.create",
           "when": "resourceFilename =~ /\\.component\\.ts$/",
+          "group": "z_commands"
+        },
+        {
+          "command": "ng-generate-spec.create",
+          "when": "resourceFilename =~ /\\.service\\.ts$/",
           "group": "z_commands"
         }
       ]
